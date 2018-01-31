@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexaRadioT", "AlexaRadioT\AlexaRadioT.csproj", "{1137ABAD-9EC6-4461-ADE8-AF95AF664D3B}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{953EA375-C08D-4050-A541-048CCC663AE6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1137ABAD-9EC6-4461-ADE8-AF95AF664D3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1137ABAD-9EC6-4461-ADE8-AF95AF664D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1137ABAD-9EC6-4461-ADE8-AF95AF664D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1137ABAD-9EC6-4461-ADE8-AF95AF664D3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{953EA375-C08D-4050-A541-048CCC663AE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953EA375-C08D-4050-A541-048CCC663AE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953EA375-C08D-4050-A541-048CCC663AE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953EA375-C08D-4050-A541-048CCC663AE6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A8354A3-7876-4188-8693-42DD369D6F6A}
+	EndGlobalSection
+EndGlobal
