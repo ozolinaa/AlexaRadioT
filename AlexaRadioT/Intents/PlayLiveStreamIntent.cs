@@ -28,7 +28,7 @@ namespace AlexaRadioT.Intents
                         Content = "Playing Live Stream "
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream())
+                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream(), 0, "LiveStream")
                     }
                 }
             };

@@ -17,59 +17,56 @@ namespace AlexaRadioT.Store
             return DateTime.UtcNow.AddHours(3);
         }
 
-        public static Uri GetUriForPodcast(int episodeNumber)
+        public static Uri GetUriForPodcast(PodcastEnity podcast)
         {
-            Uri podcastUri = new Uri(string.Format(ApplicationSettingsService.Skill.PodcastAudioUrlFormatString.ToString(), episodeNumber));
-
             if (ApplicationSettingsService.Skill.ProxyPodcastAudio) {
-                podcastUri = new Uri(ApplicationSettingsService.Skill.WebApplicationUrl, 
-                    "proxyAudio?url=" + HttpUtility.UrlEncode(podcastUri.ToString()));
-            }
-
-            return podcastUri;
+                return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl,
+                    "proxyAudio?url=" + HttpUtility.UrlEncode(podcast.AudioURL));
+            } else
+                return new Uri(podcast.AudioURL);
         }
 
         public static Uri GetUriForLiveStream()
         {
-            Uri streamUrl = ApplicationSettingsService.Skill.PodcastLiveStreamUrl;
-
             if (ApplicationSettingsService.Skill.ProxyLiveStreamAudio)
             {
-                streamUrl = new Uri(ApplicationSettingsService.Skill.WebApplicationUrl, 
-                    "proxyAudio?url=" + HttpUtility.UrlEncode(streamUrl.ToString()));
-            }
-
-            return streamUrl;
+                return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl,
+                    "proxyAudio?url=" + HttpUtility.UrlEncode(ApplicationSettingsService.Skill.PodcastLiveStreamUrl.ToString()));
+            } else
+                return ApplicationSettingsService.Skill.PodcastLiveStreamUrl;
         }
 
         public static DateTime WhenNextLiveStream()
         {
             DayOfWeek liveStreamScheduledDay = Enum.Parse<DayOfWeek>(ApplicationSettingsService.Skill.LiveStreamScheduledDay, true);
             int liveStreamScheduledHourMsk = ApplicationSettingsService.Skill.LiveStreamScheduledHourMsk;
-            //TODO Need to fix this
-            DateTime timeInMosow = GetTimeInMoscow();
-            int num_days = liveStreamScheduledDay - timeInMosow.DayOfWeek;
-            if (num_days < 0) num_days += 7;
-            DateTime nextStream = timeInMosow.AddDays(num_days);
-            int num_hours = liveStreamScheduledHourMsk - nextStream.Hour;
-            if (num_hours < 0) num_hours += 24;
-            nextStream = nextStream.AddHours(num_hours);
-            nextStream = nextStream.AddMinutes(-1 * nextStream.Minute);
-            nextStream = nextStream.AddSeconds(-1 * nextStream.Second);
 
-            return nextStream;
+            DateTime tm = GetTimeInMoscow();
+            DateTime timeNextStream = new DateTime(tm.Year, tm.Month, tm.Day, liveStreamScheduledHourMsk, 0, 0);
+            int num_days = liveStreamScheduledDay - timeNextStream.DayOfWeek;
+            if (num_days < 0) num_days += 7;
+            timeNextStream = timeNextStream.AddDays(num_days);
+
+            //If same day, but already passed push to next week
+            if ((timeNextStream - tm).TotalMinutes < 0)
+                timeNextStream = timeNextStream.AddDays(7);
+
+            return timeNextStream;
         }
 
         public static TimeSpan HowLongForNextLiveStream()
         {
-            TimeSpan realResult = WhenNextLiveStream() - GetTimeInMoscow();
+            DateTime timeInMoscow = GetTimeInMoscow();
+            DateTime nextLiveStream = WhenNextLiveStream();
+            TimeSpan realResult = nextLiveStream - timeInMoscow;
 
+            double thresholdHours = 1.5;
 
-            //if (realResult.TotalHours < 24 * 7 - thresholdHours)
-            //    return realResult;
+            if (realResult.TotalHours < 24 * 7 - thresholdHours)
+                return realResult;
 
             //This will return negative TimeSpan that indicates for how long it is Live
-            return WhenNextLiveStream().AddDays(-7) - GetTimeInMoscow();
+            return nextLiveStream.AddDays(-7) - timeInMoscow;
         }
 
         public static IOrderedEnumerable<PodcastRssItem> GetLatestPodcastsFromRSS()

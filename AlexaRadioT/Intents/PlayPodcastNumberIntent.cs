@@ -20,14 +20,15 @@ namespace AlexaRadioT.Intents
             }
 
             int number = Int32.Parse(numberStr);
-
-            return PlayPodcastNumber(request, number);
+            PodcastEnity podcast = RadioT.GetPodcastDetails(number);
+            return PlayPodcast(request, podcast);
         }
 
-        public static AlexaResponse PlayPodcastNumber(AlexaRequest request, int number)
+        public static AlexaResponse PlayPodcast(AlexaRequest request, PodcastEnity podcast)
         {
             User.GetById(request.Session.User.UserId); //create user if missing
-            User.SaveListenPosition(request.Session.User.UserId, number.ToString(), 0);
+            User.SaveListenPosition(request.Session.User.UserId, podcast.Number.ToString(), 0);
+
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()
@@ -37,16 +38,16 @@ namespace AlexaRadioT.Intents
                         Type = "SSML",
                         Ssml = string.Format("<speak>{0} {1}</speak>",
                             "Playing Radio-T podcast number",
-                            number)
+                            podcast.Number)
                     },
                     Card = new AlexaResponse.ResponseAttributes.CardAttributes()
                     {
                         Type = "Simple",
                         Title = "Radio-T ",
-                        Content = "Playing the podcast " + number
+                        Content = "Playing the podcast " + podcast.Number
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(number), 0, number.ToString())
+                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast), 0, podcast.Number.ToString())
                     }
                 }
             };

@@ -26,6 +26,7 @@ namespace AlexaRadioT.Intents
 
         private AlexaResponse _resumePodcast(AlexaRequest request, int podcastNumber, long offset)
         {
+            PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()
@@ -38,7 +39,7 @@ namespace AlexaRadioT.Intents
                             podcastNumber)
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcastNumber), offset, podcastNumber.ToString())
+                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast), offset, podcastNumber.ToString())
                     }
                 }
             };

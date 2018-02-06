@@ -44,12 +44,16 @@ namespace AlexaRadioT.Store
         }
 
         private bool IsAllowedProxyUrlForSkill(Uri url) {
+
+            string host = url.Host.ToLower();
+
             if (ApplicationSettingsService.Skill.ProxyPodcastAudio
-                && url.Host.Equals(ApplicationSettingsService.Skill.PodcastAudioUrlFormatString.Host, StringComparison.OrdinalIgnoreCase))
+                && ApplicationSettingsService.Skill.AllowedDomainsForPodcastAudioProxy.Contains(host))
                 return true;
             if (ApplicationSettingsService.Skill.ProxyLiveStreamAudio
-                && url.Host.Equals(ApplicationSettingsService.Skill.PodcastLiveStreamUrl.Host, StringComparison.OrdinalIgnoreCase))
+                && ApplicationSettingsService.Skill.AllowedDomainsForPodcastLiveStreamProxy.Contains(host))
                 return true;
+
             return false;
         }
 
@@ -57,25 +61,37 @@ namespace AlexaRadioT.Store
         {
             var httpClientHandler = new HttpClientHandler
             {
-                AllowAutoRedirect = false
+                AllowAutoRedirect = true
             };
-            var webRequest = new HttpClient(httpClientHandler);
+            var client = new HttpClient(httpClientHandler);
 
-            var buffer = new byte[4 * 1024];
+            // larger buffer causes problems with live stream
+            byte[] buffer = new byte[1024]; 
             var localResponse = context.Response;
             try
             {
-                using (var remoteStream = await webRequest.GetStreamAsync(url))
+                using (var remoteStream = await client.GetStreamAsync(url))
                 {
-                    var bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
-
                     localResponse.Clear();
+
                     localResponse.ContentType = "audio/mpeg";
+                    if (ApplicationSettingsService.Skill.PodcastLiveStreamUrl == new Uri(url))
+                    {
+                        localResponse.Headers.Add("Cache-Control", "no-cache");
+                    }
+                    else
+                    {
+                        localResponse.Headers.Add("Cache-Control", "max-age=31536000");
+                        localResponse.Headers.Add("Connection", "keep-alive");
+                        localResponse.Headers.Add("Keep-Alive", "timeout=60");
+                    }
+
+                    var bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
 
                     var fileName = Path.GetFileName(url);
                     localResponse.Headers.Add("Content-Disposition", "filename=" + fileName);
 
-                    while (bytesRead > 0) // && localResponse.IsClientConnected)
+                    while (bytesRead > 0)
                     {
                         await localResponse.Body.WriteAsync(buffer, 0, bytesRead);
                         bytesRead = remoteStream.Read(buffer, 0, buffer.Length);

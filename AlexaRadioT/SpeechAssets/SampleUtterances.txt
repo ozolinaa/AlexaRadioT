@@ -1,0 +1,83 @@
+﻿HowLongForNextLiveStreamIntent when next live stream
+HowLongForNextLiveStreamIntent when next episode
+HowLongForNextLiveStreamIntent when next show
+HowLongForNextLiveStreamIntent when next podcast
+HowLongForNextLiveStreamIntent when will be next live stream
+HowLongForNextLiveStreamIntent when will be next episode
+HowLongForNextLiveStreamIntent when will be next show
+HowLongForNextLiveStreamIntent when will be next podcast
+HowLongForNextLiveStreamIntent how long for next live stream
+HowLongForNextLiveStreamIntent how long for next episode
+HowLongForNextLiveStreamIntent how long for next live episode
+HowLongForNextLiveStreamIntent how long for next show
+HowLongForNextLiveStreamIntent how long for next podcast
+
+WhatIsTheLastPodcastNumberIntent last episode
+WhatIsTheLastPodcastNumberIntent last show
+WhatIsTheLastPodcastNumberIntent last podcast
+WhatIsTheLastPodcastNumberIntent last episode number
+WhatIsTheLastPodcastNumberIntent last show number
+WhatIsTheLastPodcastNumberIntent last podcast number
+WhatIsTheLastPodcastNumberIntent latest episode
+WhatIsTheLastPodcastNumberIntent latest show
+WhatIsTheLastPodcastNumberIntent latest podcast
+WhatIsTheLastPodcastNumberIntent latest episode number
+WhatIsTheLastPodcastNumberIntent latest show number
+WhatIsTheLastPodcastNumberIntent latest podcast number
+WhatIsTheLastPodcastNumberIntent what is the last episode
+WhatIsTheLastPodcastNumberIntent what is the last show
+WhatIsTheLastPodcastNumberIntent what is the last podcast
+WhatIsTheLastPodcastNumberIntent what is the last episode number
+WhatIsTheLastPodcastNumberIntent what is the last show number
+WhatIsTheLastPodcastNumberIntent what is the last podcast number
+WhatIsTheLastPodcastNumberIntent what is the latest episode
+WhatIsTheLastPodcastNumberIntent what is the latest show
+WhatIsTheLastPodcastNumberIntent what is the latest podcast
+WhatIsTheLastPodcastNumberIntent what is the latest episode number
+WhatIsTheLastPodcastNumberIntent what is the latest show number
+WhatIsTheLastPodcastNumberIntent what is the latest podcast number
+
+WhatIsTheCurrentPodcastNumberIntent current episode
+WhatIsTheCurrentPodcastNumberIntent current show
+WhatIsTheCurrentPodcastNumberIntent current podcast
+WhatIsTheCurrentPodcastNumberIntent current episode number
+WhatIsTheCurrentPodcastNumberIntent current show number
+WhatIsTheCurrentPodcastNumberIntent current podcast number
+WhatIsTheCurrentPodcastNumberIntent what is the current episode
+WhatIsTheCurrentPodcastNumberIntent what is the current show
+WhatIsTheCurrentPodcastNumberIntent what is the current podcast
+WhatIsTheCurrentPodcastNumberIntent what is the current episode number
+WhatIsTheCurrentPodcastNumberIntent what is the current show number
+WhatIsTheCurrentPodcastNumberIntent what is the current podcast number
+
+PlayLastPodcastIntent play last show 
+PlayLastPodcastIntent play last episode 
+PlayLastPodcastIntent play last podcast
+PlayLastPodcastIntent to play last show 
+PlayLastPodcastIntent to play last episode 
+PlayLastPodcastIntent to play last podcast 
+PlayLastPodcastIntent listen last show 
+PlayLastPodcastIntent listen last episode 
+PlayLastPodcastIntent listen last podcast 
+PlayLastPodcastIntent listen the last show 
+PlayLastPodcastIntent listen the last episode 
+PlayLastPodcastIntent listen the last podcast
+
+PlayPodcastNumberIntent play show {Number}
+PlayPodcastNumberIntent play episode {Number}
+PlayPodcastNumberIntent play podcast {Number}
+PlayPodcastNumberIntent play show number {Number}
+PlayPodcastNumberIntent play episode number {Number}
+PlayPodcastNumberIntent play podcast number {Number}
+PlayPodcastNumberIntent listen show {Number}
+PlayPodcastNumberIntent listen episode {Number}
+PlayPodcastNumberIntent listen podcast {Number}
+PlayPodcastNumberIntent listen show number {Number}
+PlayPodcastNumberIntent listen episode number {Number}
+PlayPodcastNumberIntent listen podcast number {Number}
+PlayPodcastNumberIntent listen to show number {Number}
+PlayPodcastNumberIntent listen to episode number {Number}
+PlayPodcastNumberIntent listen to podcast number {Number}
+PlayPodcastNumberIntent listen to show {Number}
+PlayPodcastNumberIntent listen to episode {Number}
+PlayPodcastNumberIntent listen to podcast {Number}

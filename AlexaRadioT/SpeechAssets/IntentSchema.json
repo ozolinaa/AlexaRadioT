@@ -1,0 +1,208 @@
+﻿{
+  "languageModel": {
+    "intents": [
+      {
+        "name": "AMAZON.CancelIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.HelpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.PauseIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.ResumeIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.StopIntent",
+        "samples": []
+      },
+      {
+        "name": "PlayNextTopicIntent",
+        "samples": [
+          "play next topic"
+        ]
+      },
+      {
+        "name": "HowLongForNextLiveStreamIntent",
+        "samples": [
+          "when next live stream",
+          "when next episode",
+          "when next show",
+          "when next podcast",
+          "when will be next live stream",
+          "when will be next episode",
+          "when will be next show",
+          "when will be next podcast",
+          "how long for next live stream",
+          "how long for next episode",
+          "how long for next live episode",
+          "how long for next show",
+          "how long for next podcast"
+        ],
+        "slots": []
+      },
+      {
+        "name": "PlayLastPodcastIntent",
+        "samples": [
+          "play last show",
+          "play last episode",
+          "play last podcast",
+          "to play last show",
+          "to play last episode",
+          "to play last podcast",
+          "to play the latest show",
+          "to play the latest episode",
+          "to play the latest podcast",
+          "listen last show",
+          "listen last episode",
+          "listen last podcast",
+          "listen the last show",
+          "listen the last episode",
+          "listen the last podcast",
+          "listen the latest show",
+          "listen the latest episode",
+          "listen the latest podcast"
+        ],
+        "slots": []
+      },
+      {
+        "name": "PlayLiveStreamIntent",
+        "samples": [
+          "live",
+          "live show",
+          "live episode",
+          "live podcast",
+          "live stream",
+          "play live",
+          "play live show",
+          "play live episode",
+          "play live podcast",
+          "play live stream",
+          "listen live",
+          "listen live show",
+          "listen live episode",
+          "listen live podcast",
+          "listen live stream"
+        ],
+        "slots": []
+      },
+      {
+        "name": "PlayPodcastNumberIntent",
+        "samples": [
+          "play show {Number}",
+          "play episode {Number}",
+          "play podcast {Number}",
+          "play show number {Number}",
+          "play episode number {Number}",
+          "play podcast number {Number}",
+          "listen show {Number}",
+          "listen episode {Number}",
+          "listen podcast {Number}",
+          "listen show number {Number}",
+          "listen episode number {Number}",
+          "listen podcast number {Number}",
+          "listen to show number {Number}",
+          "listen to episode number {Number}",
+          "listen to podcast number {Number}",
+          "listen to show {Number}",
+          "listen to episode {Number}",
+          "listen to podcast {Number}"
+        ],
+        "slots": [
+          {
+            "name": "Number",
+            "type": "AMAZON.NUMBER",
+            "samples": [
+              "{Number}"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "WhatIsTheCurrentPodcastNumberIntent",
+        "samples": [
+          "current episode",
+          "current show",
+          "current podcast",
+          "current episode number",
+          "current show number",
+          "current podcast number",
+          "what is the current episode",
+          "what is the current show",
+          "what is the current podcast",
+          "what is the current episode number",
+          "what is the current show number",
+          "what is the current podcast number"
+        ],
+        "slots": []
+      },
+      {
+        "name": "WhatIsTheLastPodcastNumberIntent",
+        "samples": [
+          "last episode",
+          "last show",
+          "last podcast",
+          "last episode number",
+          "last show number",
+          "last podcast number",
+          "latest episode",
+          "latest show",
+          "latest podcast",
+          "latest episode number",
+          "latest show number",
+          "latest podcast number",
+          "what is the last episode",
+          "what is the last show",
+          "what is the last podcast",
+          "what is the last episode number",
+          "what is the last show number",
+          "what is the last podcast number",
+          "what is the latest episode",
+          "what is the latest show",
+          "what is the latest podcast",
+          "what is the latest episode number",
+          "what is the latest show number",
+          "what is the latest podcast number"
+        ],
+        "slots": []
+      }
+    ],
+    "invocationName": "radio t"
+  },
+  "prompts": [
+    {
+      "id": "Elicit.Intent-PlayPodcastNumberIntent.IntentSlot-Number",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "What number?"
+        }
+      ]
+    }
+  ],
+  "dialog": {
+    "intents": [
+      {
+        "name": "PlayPodcastNumberIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "Number",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicitation": "Elicit.Intent-PlayPodcastNumberIntent.IntentSlot-Number"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
