@@ -12,29 +12,24 @@ namespace AlexaRadioT.Store
 {
     public static class RadioT
     {
+        public static Dictionary<int, PodcastEnity> podcastDetailsCache = new Dictionary<int, PodcastEnity>();
+
         private static DateTime GetTimeInMoscow()
         {
             return DateTime.UtcNow.AddHours(3);
         }
 
-        public static Uri GetUriForPodcast(PodcastEnity podcast)
+        public static Uri GetUriForPodcast(int podcastNumber)
         {
-            if (ApplicationSettingsService.Skill.ProxyPodcastAudio) {
-                return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl,
-                    "proxyAudio?url=" + HttpUtility.UrlEncode(podcast.AudioURL));
-            } else
-                return new Uri(podcast.AudioURL);
+            return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl, "PlayList/Podcast/" + podcastNumber);
         }
 
         public static Uri GetUriForLiveStream()
         {
-            if (ApplicationSettingsService.Skill.ProxyLiveStreamAudio)
-            {
-                return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl,
-                    "proxyAudio?url=" + HttpUtility.UrlEncode(ApplicationSettingsService.Skill.PodcastLiveStreamUrl.ToString()));
-            } else
-                return ApplicationSettingsService.Skill.PodcastLiveStreamUrl;
+            return new Uri(ApplicationSettingsService.Skill.WebApplicationUrl, "PlayList/LiveStream");
         }
+
+
 
         public static DateTime WhenNextLiveStream()
         {
@@ -99,6 +94,9 @@ namespace AlexaRadioT.Store
 
         public static PodcastEnity GetPodcastDetails(int number)
         {
+            if (podcastDetailsCache.TryGetValue(number, out PodcastEnity cachedPodcast))
+                return cachedPodcast;
+
             string podcastsDetailsURLFormat = ApplicationSettingsService.Skill.PodcastDetailsAPIFormatString.ToString();
 
             PodcastEnity podcast = null;
@@ -107,6 +105,8 @@ namespace AlexaRadioT.Store
                 string json = client.GetStringAsync(string.Format(podcastsDetailsURLFormat, number)).Result;
                 podcast = JsonConvert.DeserializeObject<PodcastEnity>(json);
             }
+
+            podcastDetailsCache.Add(number, podcast);
             return podcast;
         }
 

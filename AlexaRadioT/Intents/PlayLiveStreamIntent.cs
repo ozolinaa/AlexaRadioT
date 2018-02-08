@@ -12,6 +12,7 @@ namespace AlexaRadioT.Intents
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
             User.SaveListenPosition(request.Session.User.UserId, "LiveStream", 0);
+
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()

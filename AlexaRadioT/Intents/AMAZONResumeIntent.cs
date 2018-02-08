@@ -39,7 +39,7 @@ namespace AlexaRadioT.Intents
                             podcastNumber)
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast), offset, podcastNumber.ToString())
+                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcastNumber), offset, podcastNumber.ToString())
                     }
                 }
             };
@@ -54,7 +54,7 @@ namespace AlexaRadioT.Intents
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
-                        Ssml = "<speak>Resuming Radio-T podcast</speak>"
+                        Ssml = "<speak>Resuming Radio-T <phoneme ph=\"laɪv\">live</phoneme> stream</speak>"
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
                         new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream(), 0, "LiveStream")

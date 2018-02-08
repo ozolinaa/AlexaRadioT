@@ -77,7 +77,7 @@ namespace AlexaRadioT.Store
         {
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
-                cmd.CommandText = "UPDATE [dbo].[Users] SET [LastActiveDateTimeUtc] = @ActiveDateTime, [ListeningAudioToken] = NULL, [OffsetInMilliseconds] = NULL WHERE [Id] = @Id";
+                cmd.CommandText = "UPDATE [Users] SET [LastActiveDateTimeUtc] = @ActiveDateTime, [ListeningAudioToken] = NULL, [OffsetInMilliseconds] = NULL WHERE [Id] = @Id";
                 cmd.Parameters.AddWithValue("@ActiveDateTime", DateTime.UtcNow);
                 cmd.Parameters.AddWithValue("@Id", userId);
                 cmd.ExecuteNonQuery();

@@ -48,6 +48,7 @@ namespace AlexaRadioT.Intents
             User.SaveListenPosition(user.Id, user.ListeningAudioToken, newOffset);
             return new AlexaResponse()
             {
+
                 Response = new AlexaResponse.ResponseAttributes()
                 {
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
@@ -56,7 +57,7 @@ namespace AlexaRadioT.Intents
                         Ssml = "<speak>Playing next news</speak>"
                     },
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast), newOffset, podcast.Number.ToString())
+                        new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast.Number), newOffset, podcast.Number.ToString())
                     }
                 }
             };

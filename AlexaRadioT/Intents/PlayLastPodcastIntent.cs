@@ -12,7 +12,7 @@ namespace AlexaRadioT.Intents
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
             PodcastEnity podcast = RadioT.GetLatestPodcasts(1).First();
-            return PlayPodcastNumberIntent.PlayPodcast(request, podcast);
+            return PlayPodcastNumberIntent.PlayPodcast(request, podcast.Number);
         }
     }
 }

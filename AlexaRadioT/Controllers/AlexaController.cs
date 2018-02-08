@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AlexaRadioT.Store;
 using System.IO;
@@ -48,6 +45,10 @@ namespace AlexaRadioT.Controllers
             catch (Exception e)
             {
                 Log.LogException(e);
+            }
+
+            if (response == null) {
+                response = new AlexaResponse() { Session = null };
             }
 
             return response;
