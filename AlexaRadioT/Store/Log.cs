@@ -125,6 +125,8 @@ namespace AlexaRadioT.Store
 
         public static void LogDebug(string log)
         {
+            return;
+
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
                 cmd.CommandText = "INSERT INTO [DebugLog] ([Id],[LoggedDateTimeUtc],[Log]) VALUES (@Id,@LoggedDateTimeUtc,@Log)";
