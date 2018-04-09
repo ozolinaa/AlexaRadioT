@@ -8,6 +8,6 @@ namespace AlexaRadioT.Events
 {
     public interface IAlexaEvent
     {
-        Models.AlexaResponse ProcessRequest(Models.AlexaRequest request);
+        void ProcessRequest(Models.AlexaRequest request);
     }
 }

@@ -11,8 +11,11 @@ namespace AlexaRadioT.Intents
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            User.SaveListenPosition(request.Session.User.UserId, "LiveStream", 0);
+            TimeSpan duration = RadioT.HowLongForNextLiveStream();
+            if (duration.TotalMinutes > 0)
+                return RespondWhenNext(request, duration);
 
+            User.SaveListenPosition(request.Session.User.UserId, "LiveStream", 0);
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()
@@ -32,7 +35,28 @@ namespace AlexaRadioT.Intents
                         new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream(), 0, "LiveStream")
                     }
                 }
-            };
+            };  
         }
+
+        private AlexaResponse RespondWhenNext(AlexaRequest request, TimeSpan duration)
+        {
+            AlexaResponse response = new AlexaResponse();
+            response.Response.OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+            {
+                Type = "SSML",
+                Ssml = string.Format("<speak>{0} {1}</speak>",
+                    "Next Radio-T will be <phoneme ph=\"laɪv\">live</phoneme> in",
+                    Speech.ToString(duration, applySSML: true))
+            };
+            response.Response.Card = new AlexaResponse.ResponseAttributes.CardAttributes()
+            {
+                Type = "Simple",
+                Title = "Next Radio-T",
+                Content = "Will be live in " + Speech.ToString(duration)
+            };
+
+            return response;
+        }
+
     }
 }

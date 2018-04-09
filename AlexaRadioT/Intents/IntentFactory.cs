@@ -8,12 +8,17 @@ using System.Linq;
 
 namespace AlexaRadioT.Intents
 {
-    public class IntentFabric
+    public class IntentFactory
     {
         public static IAlexaIntent GetIntentForRequest(AlexaRequest request)
         {
-            
-            string requestedIntentName = request.Request.Intent.Name != null ? request.Request.Intent.Name.Replace(".", "") : "";
+            string requestedIntentName = null;
+
+            if (request != null && request.Request != null && request.Request.Intent != null && request.Request.Intent.Name != null)
+            {
+                requestedIntentName = request.Request.Intent.Name.Replace(".", "");
+            }
+
             if (string.IsNullOrEmpty(requestedIntentName))
                 return null;
 
@@ -23,13 +28,14 @@ namespace AlexaRadioT.Intents
                 .SelectMany(s => s.GetTypes())
                 .Where(p => Itype.IsAssignableFrom(p) && p != Itype)
                 .FirstOrDefault(x => x.Name.Equals(requestedIntentName, StringComparison.OrdinalIgnoreCase));
+
             if (t != null)
             {
                 intent = (IAlexaIntent)Activator.CreateInstance(t);
             }
             else
             {
-                intent = new AMAZONHelpIntent(); //unknown user request - ask user
+                intent = new AMAZONHelpIntent(); //unknown user intent - ask user
             }
 
             return intent;

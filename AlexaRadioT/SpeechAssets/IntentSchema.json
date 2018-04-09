@@ -34,10 +34,26 @@
           "when next episode",
           "when next show",
           "when next podcast",
+          "when next live stream will be ",
+          "when next episode will be",
+          "when next show will be",
+          "when next podcast will be",
+          "when the next live stream will be ",
+          "when the next episode will be",
+          "when the next show will be",
+          "when the next podcast will be",
+          "when will be the next live stream",
+          "when will be the next episode",
+          "when will be the next show",
+          "when will be the next podcast",
           "when will be next live stream",
           "when will be next episode",
           "when will be next show",
           "when will be next podcast",
+          "when will be the next live stream",
+          "when will be the next episode",
+          "when will be the next show",
+          "when will be the next podcast",
           "how long for next live stream",
           "how long for next episode",
           "how long for next live episode",
@@ -172,7 +188,7 @@
         "slots": []
       }
     ],
-    "invocationName": "radio t"
+    "invocationName": "Radio T"
   },
   "prompts": [
     {

@@ -10,7 +10,16 @@ namespace AlexaRadioT.Intents
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrEmpty(request.Session.Attributes.NextIntentName) == false)
+            {
+                request.Request.Intent.Name = request.Session.Attributes.NextIntentName;
+                request.Request.Intent.Name = typeof(HowLongForNextLiveStreamIntent).ToString();
+                request.Session.Attributes.NextIntentName = "";
+                IAlexaIntent intent = IntentFactory.GetIntentForRequest(request);
+                if (intent != null)
+                    return intent.ProcessRequest(request);
+            }
+            return null;
         }
     }
 }

@@ -39,7 +39,10 @@ namespace AlexaRadioT.Store
             if (t.Seconds > 0)
             {
                 string ssmlFormatString = applySSML ? "<break strength=\"strong\"/>{0}" : "{0}";
-                result += string.Format(ssmlFormatString, string.Format("and {0} {1} ", t.Seconds, t.Seconds > 1 ? "seconds" : "second"));
+                result += string.Format(ssmlFormatString, string.Format("{0} {1} {2} ", 
+                    t.Hours == 0 && t.Minutes == 0 ? "" : "and", 
+                    t.Seconds, 
+                    t.Seconds > 1 ? "seconds" : "second"));
             }
             return result.TrimEnd();
         }

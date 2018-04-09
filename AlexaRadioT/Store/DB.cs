@@ -64,6 +64,12 @@ namespace AlexaRadioT.Store
 
             using (SqliteCommand cmd = con.CreateCommand())
             {
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS DebugLog([Id] [NVARCHAR(50)] NOT NULL PRIMARY KEY, [LoggedDateTimeUtc] [datetime] NOT NULL, [Log] [TEXT] NOT NULL)";
+                cmd.ExecuteNonQuery();
+            }
+
+            using (SqliteCommand cmd = con.CreateCommand())
+            {
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Users([Id] [NVARCHAR(255)] NOT NULL PRIMARY KEY, [CreatedDateTimeUtc] [datetime] NOT NULL, [LastActiveDateTimeUtc] [datetime] NOT NULL, [ListeningAudioToken] [NVARCHAR(255)] NULL, [OffsetInMilliseconds] [bigint] NULL)";
                 cmd.ExecuteNonQuery();
             }

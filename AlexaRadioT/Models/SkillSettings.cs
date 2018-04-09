@@ -7,6 +7,7 @@ namespace AlexaRadioT.Models
 {
     public class SkillSettings
     {
+        public string[] RespondToSkillId { get; set; }
         public Uri WebApplicationUrl { get; set; }
         public Uri PodcastRssFeed { get; set; }
         public Uri LiveStreamUrl { get; set; }

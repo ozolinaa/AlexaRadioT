@@ -24,11 +24,11 @@ namespace AlexaRadioT.Models
         [JsonObject("attributes")]
         public class SessionCustomAttributes
         {
-            [JsonProperty("podcastNumber")]
-            public int PodcastNumber { get; set; }
+            [JsonProperty("nextIntentName")]
+            public string NextIntentName { get; set; }
 
-            [JsonProperty("topicIndex")]
-            public int TopicIndex { get; set; }
+            [JsonProperty("nextIntentSlotsJson")]
+            public string NextIntentSlotsJson { get; set; }
         }
 
         [JsonObject("session")]
@@ -171,6 +171,9 @@ namespace AlexaRadioT.Models
             [JsonObject("System")]
             public class SystemAttributes
             {
+                [JsonProperty("application")]
+                public SessionAttributes.ApplicationAttributes Application { get; set; }
+
                 [JsonProperty("user")]
                 public SessionAttributes.UserAttributes User { get; set; }
             }

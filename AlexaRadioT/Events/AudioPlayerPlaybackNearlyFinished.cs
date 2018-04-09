@@ -8,9 +8,8 @@ namespace AlexaRadioT.Events
 {
     public class AudioPlayerPlaybackNearlyFinished : IAlexaEvent
     {
-        public AlexaResponse ProcessRequest(AlexaRequest request)
+        public void ProcessRequest(AlexaRequest request)
         {
-            return null;
         }
     }
 }

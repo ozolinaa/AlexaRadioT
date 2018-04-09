@@ -10,7 +10,7 @@ namespace AlexaRadioT.Intents
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

@@ -12,15 +12,14 @@ namespace AlexaRadioT.Intents
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
             TimeSpan duration = RadioT.HowLongForNextLiveStream();
+            return RespondWhenNext(request, duration);
 
-            if (duration.TotalSeconds > 0)
-            {
-                return RespondWhenNext(request, duration);
-            }
-            else
-            {
-                return RespondItsLive(request, duration);
-            }
+            //Forse to RespondItsLive
+            //duration = DateTime.Now - DateTime.Now.AddHours(1);
+            //if (duration.TotalMinutes > 0)
+            //    return RespondWhenNext(request, duration);
+            //else
+            //    return RespondItsLive(request, duration);
 
         }
 
@@ -45,13 +44,24 @@ namespace AlexaRadioT.Intents
 
         private AlexaResponse RespondItsLive(AlexaRequest request, TimeSpan duration)
         {
-            AlexaResponse response = new AlexaResponse();
-            response.Response.OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+            AlexaResponse response = new AlexaResponse()
             {
-                Ssml = string.Format("<speak>{0} {1} {2}</speak>",
+                Response = new AlexaResponse.ResponseAttributes()
+                {
+                    OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                    {
+                        Type = "SSML",
+                        Ssml = string.Format("<speak>{0} {1} {2}</speak>",
                     "Radio-T is <phoneme ph=\"laɪv\">live</phoneme> now, it's playing for",
                     Speech.ToString(duration, applySSML: true),
-                    "Would you like to play <phoneme ph=\"laɪv\">live</phoneme> stream now?")
+                    "Would you like to listen <phoneme ph=\"laɪv\">live</phoneme> stream now?")
+                    },
+                    ShouldEndSession = false
+                },
+                Session = new AlexaRequest.SessionCustomAttributes()
+                {
+                    NextIntentName = typeof(PlayLiveStreamIntent).Name
+                }
             };
 
             return response;

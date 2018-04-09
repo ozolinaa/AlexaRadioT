@@ -27,7 +27,7 @@ namespace AlexaRadioT
         {
             //https://www.youtube.com/watch?v=TNCdStJRW3s
             //https://stackoverflow.com/questions/45058527/proper-way-to-build-instantiate-a-static-class-in-aspnetcore
-            //Could not configure dependency injection from articles aboce, will do basic stuff in next 2 lines
+            //Could not configure dependency injection from articles above, will do basic stuff in next 2 lines
             SkillSettings skillSettings = Configuration.GetSection("SkillSettings").Get<SkillSettings>();
             ApplicationSettingsService.SetSkillSettings(skillSettings);
 
@@ -37,7 +37,14 @@ namespace AlexaRadioT
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseMvc();
+            app.UseStaticFiles();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

@@ -12,8 +12,6 @@ namespace AlexaRadioT.Store
 {
     public static class RadioT
     {
-        public static Dictionary<int, PodcastEnity> podcastDetailsCache = new Dictionary<int, PodcastEnity>();
-
         private static DateTime GetTimeInMoscow()
         {
             return DateTime.UtcNow.AddHours(3);
@@ -55,7 +53,7 @@ namespace AlexaRadioT.Store
             DateTime nextLiveStream = WhenNextLiveStream();
             TimeSpan realResult = nextLiveStream - timeInMoscow;
 
-            double thresholdHours = 1.5;
+            double thresholdHours = 2;
 
             if (realResult.TotalHours < 24 * 7 - thresholdHours)
                 return realResult;
@@ -94,19 +92,19 @@ namespace AlexaRadioT.Store
 
         public static PodcastEnity GetPodcastDetails(int number)
         {
-            if (podcastDetailsCache.TryGetValue(number, out PodcastEnity cachedPodcast))
-                return cachedPodcast;
+            PodcastEnity podcast = null;
+            podcast = Cache.PodcastGet(number);
+            if (podcast != null)
+                return podcast;
 
             string podcastsDetailsURLFormat = ApplicationSettingsService.Skill.PodcastDetailsAPIFormatString.ToString();
-
-            PodcastEnity podcast = null;
             using (HttpClient client = new HttpClient())
             {
                 string json = client.GetStringAsync(string.Format(podcastsDetailsURLFormat, number)).Result;
                 podcast = JsonConvert.DeserializeObject<PodcastEnity>(json);
             }
 
-            podcastDetailsCache.Add(number, podcast);
+            Cache.PodcastPut(podcast);
             return podcast;
         }
 

@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\Bora Bora.pubxml" />
+    <None Remove="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Remove="RadioTSQLite.db" />
   </ItemGroup>
 

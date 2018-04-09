@@ -26,6 +26,32 @@ namespace AlexaRadioT.Store
             return requestID;
         }
 
+        public static IEnumerable<LogItem> AlexaRequestSelect(int limit = 10)
+        {
+            List<LogItem> result = new List<LogItem>();
+
+            using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
+            {
+                cmd.CommandText = "SELECT [Id], [RequestedDateTimeUtc], [JSON] FROM [Requests] ORDER BY [RequestedDateTimeUtc] DESC LIMIT @Limit";
+                cmd.Parameters.AddWithValue("@Limit", limit);
+
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new LogItem()
+                        {
+                            ID = new Guid((string)reader["Id"]),
+                            LoggedDateTime = Convert.ToDateTime((string)reader["RequestedDateTimeUtc"]),
+                            Text = (string)reader["JSON"],
+                        });
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public static string[] GetLatestAlexaRequests(int count)
         {
             List<string> result = new List<string>();
@@ -69,6 +95,70 @@ namespace AlexaRadioT.Store
 
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        public static IEnumerable<LogItem> ExceptionSelect(int limit = 10)
+        {
+            List<LogItem> result = new List<LogItem>();
+
+            using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
+            {
+                cmd.CommandText = "SELECT [Id], [LoggedDateTimeUtc], [Error] FROM [ErrorLog] ORDER BY [LoggedDateTimeUtc] DESC LIMIT @Limit";
+                cmd.Parameters.AddWithValue("@Limit", limit);
+
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new LogItem()
+                        {
+                            ID = new Guid((string)reader["Id"]),
+                            LoggedDateTime = Convert.ToDateTime((string)reader["LoggedDateTimeUtc"]),
+                            Text = (string)reader["Error"],
+                        });
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static void LogDebug(string log)
+        {
+            using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
+            {
+                cmd.CommandText = "INSERT INTO [DebugLog] ([Id],[LoggedDateTimeUtc],[Log]) VALUES (@Id,@LoggedDateTimeUtc,@Log)";
+                cmd.Parameters.AddWithValue("@Id", Guid.NewGuid().ToString());
+                cmd.Parameters.AddWithValue("@LoggedDateTimeUtc", DateTime.UtcNow);
+                cmd.Parameters.AddWithValue("@Log", log);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<LogItem> DebugSelect(int limit = 10)
+        {
+            List<LogItem> result = new List<LogItem>();
+
+            using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
+            {
+                cmd.CommandText = "SELECT [Id], [LoggedDateTimeUtc], [Log] FROM [DebugLog] ORDER BY [LoggedDateTimeUtc] DESC LIMIT @Limit";
+                cmd.Parameters.AddWithValue("@Limit", limit);
+
+                using (DbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(new LogItem() {
+                            ID = new Guid((string)reader["Id"]),
+                            LoggedDateTime = Convert.ToDateTime((string)reader["LoggedDateTimeUtc"]),
+                            Text = (string)reader["Log"],
+                        });
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }
