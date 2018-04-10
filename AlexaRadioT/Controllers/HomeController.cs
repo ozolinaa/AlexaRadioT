@@ -15,7 +15,7 @@ namespace AlexaRadioT.Controllers
 
         public IActionResult DebugLog()
         {
-            IEnumerable<Models.LogItem> debugLog = Store.Log.DebugSelect();
+            IEnumerable<Models.LogItem> debugLog = Store.Log.DebugSelect(50);
             return View("Log", debugLog);
         }
 
@@ -27,8 +27,8 @@ namespace AlexaRadioT.Controllers
 
         public IActionResult RequestLog()
         {
-            IEnumerable<Models.LogItem> requestLog = Store.Log.AlexaRequestSelect();
-            return View("Log", requestLog);
+            IEnumerable<Models.RequestLogItem> requestLog = Store.Log.AlexaRequestSelect();
+            return View("RequestLog", requestLog);
         }
 
     }

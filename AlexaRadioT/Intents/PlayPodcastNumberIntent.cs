@@ -23,7 +23,7 @@ namespace AlexaRadioT.Intents
             return PlayPodcast(request, number);
         }
 
-        public static AlexaResponse PlayPodcast(AlexaRequest request, int podcastNumber)
+        public static AlexaResponse PlayPodcast(AlexaRequest request, int podcastNumber, string customSsml = null)
         {
             User.GetById(request.Session.User.UserId); //create user if missing
             User.SaveListenPosition(request.Session.User.UserId, podcastNumber.ToString(), 0);
@@ -35,9 +35,9 @@ namespace AlexaRadioT.Intents
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
-                        Ssml = string.Format("<speak>{0} {1}</speak>",
+                        Ssml = string.IsNullOrEmpty(customSsml) ? string.Format("<speak>{0} {1}</speak>",
                             "Playing Radio-T podcast number",
-                            podcastNumber)
+                            podcastNumber) : customSsml
                     },
                     Card = new AlexaResponse.ResponseAttributes.CardAttributes()
                     {

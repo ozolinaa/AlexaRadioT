@@ -6,7 +6,7 @@ using AlexaRadioT.Models;
 
 namespace AlexaRadioT.Intents
 {
-    public class AMAZONShuffleOnIntent : IAlexaIntent
+    public class AMAZONLoopOnIntent : IAlexaIntent
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
@@ -18,7 +18,7 @@ namespace AlexaRadioT.Intents
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
-                        Ssml = "<speak>I am sorry, I can not shuffle Radio-T podcasts, they are hours long</speak>"
+                        Ssml = "<speak>I am sorry, I can not loop throught Radio-T podcasts, they are hours long</speak>"
                     }
                 }
             };

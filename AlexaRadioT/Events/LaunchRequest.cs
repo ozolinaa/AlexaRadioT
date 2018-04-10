@@ -1,5 +1,6 @@
 ﻿using AlexaRadioT.Intents;
 using AlexaRadioT.Models;
+using AlexaRadioT.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,11 @@ namespace AlexaRadioT.Events
 {
     public class LaunchRequest : IAlexaEvent
     {
-        public void ProcessRequest(AlexaRequest request)
+        public AlexaResponse ProcessRequest(AlexaRequest request)
         {
+            PodcastEnity podcast = RadioT.GetLatestPodcasts(1).First();
+            return PlayPodcastNumberIntent.PlayPodcast(request, podcast.Number, "<speak>Welcome to Radio-T! Playing latest podcast</speak>");
+
             AlexaResponse response = new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()
@@ -18,7 +22,7 @@ namespace AlexaRadioT.Events
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
-                        Ssml = "<speak>Welcome to Radio-T! Would you like to listen the last podcast?</speak>"
+                        Ssml = "<speak>Welcome to Radio-T! Playing latest podcast</speak>"
                     },
                     ShouldEndSession = true,
                 },
@@ -27,6 +31,8 @@ namespace AlexaRadioT.Events
                     NextIntentName = typeof(PlayLastPodcastIntent).ToString()
                 }
             };
+
+            return response;
         }
     }
 }

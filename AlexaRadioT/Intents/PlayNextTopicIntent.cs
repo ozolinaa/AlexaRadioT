@@ -9,9 +9,31 @@ namespace AlexaRadioT.Intents
 {
     public class PlayNextTopicIntent : IAlexaIntent
     {
-        public AlexaResponse ProcessRequest(AlexaRequest request)
+        public virtual AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            AlexaUserModel user = User.GetById(request.Session.User.UserId);
+            return _respondWithNextTopic(request, true);
+        }
+
+        protected AlexaResponse _respondWithNextTopic(AlexaRequest request, bool withVoice)
+        {
+            AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
+
+            if (user.ListeningAudioToken.Equals("LiveStream", StringComparison.OrdinalIgnoreCase))
+            {
+                return new AlexaResponse()
+                {
+                    Response = new AlexaResponse.ResponseAttributes()
+                    {
+                        ShouldEndSession = true,
+                        OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                        {
+                            Type = "SSML",
+                            Ssml = "<speak>I can not do that, this is <phoneme ph=\"laɪv\">live</phoneme> stream</speak>"
+                        }
+                    }
+                };
+            }
+
             PodcastEnity podcast = RadioT.GetPodcastDetails(Int32.Parse(user.ListeningAudioToken));
 
             PodcastTimeLabel nextTopic = null;
@@ -32,11 +54,11 @@ namespace AlexaRadioT.Intents
                     Session = null,
                     Response = new AlexaResponse.ResponseAttributes()
                     {
-                        OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                        OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                         {
                             Type = "SSML",
                             Ssml = "<speak>You have listened the last topic</speak>"
-                        },
+                        } : null,
                         Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
                             new AlexaResponse.ResponseAttributes.AudioDirective("Stop")
                         }
@@ -51,11 +73,11 @@ namespace AlexaRadioT.Intents
 
                 Response = new AlexaResponse.ResponseAttributes()
                 {
-                    OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                    OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
                         Ssml = "<speak>Playing next news</speak>"
-                    },
+                    } : null,
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
                         new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcast.Number), newOffset, podcast.Number.ToString())
                     }

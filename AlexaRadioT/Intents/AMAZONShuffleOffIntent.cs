@@ -14,7 +14,7 @@ namespace AlexaRadioT.Intents
             {
                 Response = new AlexaResponse.ResponseAttributes()
                 {
-                    ShouldEndSession = false,
+                    ShouldEndSession = true,
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using AlexaRadioT.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using AlexaRadioT.Models;
 
 namespace AlexaRadioT.Intents
 {
-    public class AMAZONShuffleOnIntent : IAlexaIntent
+    public class AMAZONLoopOffIntent : IAlexaIntent
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
@@ -18,7 +18,7 @@ namespace AlexaRadioT.Intents
                     OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
-                        Ssml = "<speak>I am sorry, I can not shuffle Radio-T podcasts, they are hours long</speak>"
+                        Ssml = "<speak>Loop is turned off</speak>"
                     }
                 }
             };

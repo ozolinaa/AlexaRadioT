@@ -1,6 +1,6 @@
-﻿@model IEnumerable<AlexaRadioT.Models.LogItem>
+﻿@model IEnumerable<AlexaRadioT.Models.RequestLogItem>
 @{
-    ViewData["Title"] = "Log";
+    ViewData["Title"] = "RequestLog";
 }
 <table class="table" border="1">
     <thead>
@@ -13,6 +13,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Text)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Response)
             </th>
         </tr>
     </thead>
@@ -28,6 +31,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Response)
                 </td>
             </tr>
         }

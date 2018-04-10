@@ -26,24 +26,25 @@ namespace AlexaRadioT.Store
             return requestID;
         }
 
-        public static IEnumerable<LogItem> AlexaRequestSelect(int limit = 10)
+        public static IEnumerable<RequestLogItem> AlexaRequestSelect(int limit = 10)
         {
-            List<LogItem> result = new List<LogItem>();
+            List<RequestLogItem> result = new List<RequestLogItem>();
 
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
-                cmd.CommandText = "SELECT [Id], [RequestedDateTimeUtc], [JSON] FROM [Requests] ORDER BY [RequestedDateTimeUtc] DESC LIMIT @Limit";
+                cmd.CommandText = "SELECT [Id], [RequestedDateTimeUtc], [JSON], [ResponseJSON] FROM [Requests] ORDER BY [RequestedDateTimeUtc] DESC LIMIT @Limit";
                 cmd.Parameters.AddWithValue("@Limit", limit);
 
                 using (DbDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        result.Add(new LogItem()
+                        result.Add(new RequestLogItem()
                         {
                             ID = new Guid((string)reader["Id"]),
                             LoggedDateTime = Convert.ToDateTime((string)reader["RequestedDateTimeUtc"]),
                             Text = (string)reader["JSON"],
+                            Response = reader["ResponseJSON"].ToString()
                         });
                     }
                 }
@@ -125,8 +126,6 @@ namespace AlexaRadioT.Store
 
         public static void LogDebug(string log)
         {
-            return;
-
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
                 cmd.CommandText = "INSERT INTO [DebugLog] ([Id],[LoggedDateTimeUtc],[Log]) VALUES (@Id,@LoggedDateTimeUtc,@Log)";

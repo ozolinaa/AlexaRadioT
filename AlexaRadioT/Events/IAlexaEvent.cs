@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlexaRadioT.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace AlexaRadioT.Events
 {
     public interface IAlexaEvent
     {
-        void ProcessRequest(Models.AlexaRequest request);
+        AlexaResponse ProcessRequest(Models.AlexaRequest request);
     }
 }

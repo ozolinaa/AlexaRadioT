@@ -47,7 +47,11 @@ namespace AlexaRadioT.Controllers
                 IAlexaEvent aEvent = EventFabric.GetEventForRequest(request);
                 if (aEvent != null)
                 {
-                    aEvent.ProcessRequest(request);
+                    AlexaResponse eventResponse = aEvent.ProcessRequest(request);
+                    if (response == null)
+                    {
+                        response = eventResponse;
+                    }
                 }
 
                 Log.LogAlexaResponse(loggedRequestId, response);

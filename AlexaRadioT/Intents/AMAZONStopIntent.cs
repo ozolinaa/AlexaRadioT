@@ -11,8 +11,6 @@ namespace AlexaRadioT.Intents
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            User.ClearListenPosition(request.Session.User.UserId);
-
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()

@@ -9,9 +9,14 @@ namespace AlexaRadioT.Intents
 {
     public class AMAZONResumeIntent : IAlexaIntent
     {
-        public AlexaResponse ProcessRequest(AlexaRequest request)
+        public virtual AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            AlexaUserModel user = User.GetById(request.Session.User.UserId);
+            return _resume(request, true);
+        }
+
+        protected AlexaResponse _resume(AlexaRequest request, bool withVoice = true)
+        {
+            AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
 
             Log.LogDebug(string.Format("User.GetById Id {0} ListeningAudioToken {1} OffsetInMilliseconds {2}", user.Id, user.ListeningAudioToken, user.OffsetInMilliseconds));
 
@@ -19,14 +24,14 @@ namespace AlexaRadioT.Intents
                 return null;
 
             if (Int32.TryParse(user.ListeningAudioToken, out int podcastNumber))
-                return _resumePodcast(request, podcastNumber, user.OffsetInMilliseconds.Value);
+                return _resumePodcast(request, podcastNumber, user.OffsetInMilliseconds.Value, withVoice);
             else if (user.ListeningAudioToken.Equals("LiveStream", StringComparison.OrdinalIgnoreCase))
-                return _resumeLiveStream(request);
+                return _resumeLiveStream(request, withVoice);
             else
                 return null;
         }
 
-        private AlexaResponse _resumePodcast(AlexaRequest request, int podcastNumber, long offset)
+        protected AlexaResponse _resumePodcast(AlexaRequest request, int podcastNumber, long offset, bool withVoice)
         {
             PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
 
@@ -36,13 +41,13 @@ namespace AlexaRadioT.Intents
             {
                 Response = new AlexaResponse.ResponseAttributes()
                 {
-                    OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                    OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
                         Ssml = string.Format("<speak>{0} {1}</speak>",
                             "Resuming Radio-T podcast number",
                             podcastNumber)
-                    },
+                    } : null,
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
                         new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(podcastNumber), offset, podcastNumber.ToString())
                     }
@@ -50,17 +55,17 @@ namespace AlexaRadioT.Intents
             };
         }
 
-        private AlexaResponse _resumeLiveStream(AlexaRequest request)
+        protected AlexaResponse _resumeLiveStream(AlexaRequest request, bool withVoice)
         {
             return new AlexaResponse()
             {
                 Response = new AlexaResponse.ResponseAttributes()
                 {
-                    OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                    OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
                     {
                         Type = "SSML",
                         Ssml = "<speak>Resuming Radio-T <phoneme ph=\"laɪv\">live</phoneme> stream</speak>"
-                    },
+                    } : null,
                     Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
                         new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream(), 0, "LiveStream")
                     }
