@@ -87,9 +87,9 @@ namespace AlexaRadioT.Controllers
                 return false;
 
             Uri certUrl = new Uri(signatureCertChainUrl);
-
+            
             if (!((certUrl.Port == 443 || certUrl.IsDefaultPort)
-                //&& certUrl.Scheme.Equals("s3.amazonaws.com", StringComparison.OrdinalIgnoreCase))
+                && certUrl.Host.Equals("s3.amazonaws.com", StringComparison.OrdinalIgnoreCase)
                 && certUrl.AbsolutePath.StartsWith("/echo.api/")))
                 return false;
 
@@ -104,8 +104,8 @@ namespace AlexaRadioT.Controllers
                     && effectiveDate < DateTime.UtcNow)))
                     return false;
 
-                //if (!cert.Subject.Contains("CN=echo-api.amazon.com") || !cert.Issuer.Contains("CN=VeriSign Class 3 Secure Server CA"))
-                //    return false;
+                if (!cert.Subject.Contains("CN=echo-api.amazon.com"))
+                    return false;
             }
 
             return true;

@@ -14,9 +14,31 @@ namespace AlexaRadioT.Intents
             return _respondWithNextTopic(request, true);
         }
 
+        private PodcastTimeLabel _getNextTopic(PodcastEnity podcast, long offsetInMilliseconds)
+        {
+            if (podcast.OrderedTimeLabels == null)
+                return null;
+
+            PodcastTimeLabel nextTopic = null;
+            foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
+            {
+                if ((timeLabel.Time - podcast.StartDateTime).TotalMilliseconds > offsetInMilliseconds)
+                {
+                    nextTopic = timeLabel;
+                    break;
+                }
+            }
+
+            return nextTopic;
+        }
+
+
         protected AlexaResponse _respondWithNextTopic(AlexaRequest request, bool withVoice)
         {
             AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
+
+            string token = request.Context.AudioPlayer.Token;
+            long offsetInMilliseconds = request.Context.AudioPlayer.OffsetInMilliseconds;
 
             if (user.ListeningAudioToken.Equals("LiveStream", StringComparison.OrdinalIgnoreCase))
             {
@@ -34,43 +56,58 @@ namespace AlexaRadioT.Intents
                 };
             }
 
-            PodcastEnity podcast = RadioT.GetPodcastDetails(Int32.Parse(user.ListeningAudioToken));
-
-            PodcastTimeLabel nextTopic = null;
-            foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
-            {
-                if ((timeLabel.Time - podcast.StartDateTime).TotalMilliseconds > user.OffsetInMilliseconds)
-                {
-                    nextTopic = timeLabel;
-                    break;
-                }
-            }
+            int podcastNumber = Int32.Parse(token);
+            PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
+            PodcastTimeLabel nextTopic = _getNextTopic(podcast, offsetInMilliseconds);
 
             if (nextTopic == null)
             {
-                User.ClearListenPosition(user.Id);
-                return new AlexaResponse()
+                try
                 {
-                    Session = null,
-                    Response = new AlexaResponse.ResponseAttributes()
+                    PodcastEnity nextPodcast = RadioT.GetPodcastDetails(podcast.Number + 1);
+                    if (nextPodcast == null)
+                        throw new Exception("no next podcast");
+
+                    return new AlexaResponse()
                     {
-                        OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                        Session = null,
+                        Response = new AlexaResponse.ResponseAttributes()
                         {
-                            Type = "SSML",
-                            Ssml = "<speak>You have listened the last topic</speak>"
-                        } : null,
-                        Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
-                            new AlexaResponse.ResponseAttributes.AudioDirective("Stop")
+                            OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                            {
+                                Type = "SSML",
+                                Ssml = "<speak>Starting podcast number " + nextPodcast.Number + " </speak>"
+                            } : null,
+                            Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
+                                new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForPodcast(nextPodcast.Number), 0, nextPodcast.Number.ToString())
+                            }
                         }
-                    }
-                };
+                    };
+                }
+                catch (Exception)
+                {
+                    return new AlexaResponse()
+                    {
+                        Session = null,
+                        Response = new AlexaResponse.ResponseAttributes()
+                        {
+                            OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                            {
+                                Type = "SSML",
+                                Ssml = "<speak>You have listened the last Radio-T podcast</speak>"
+                            } : null,
+                            Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
+                                new AlexaResponse.ResponseAttributes.AudioDirective("Stop")
+                            }
+                        }
+                    };
+                }
             }
 
             long newOffset = nextTopic.GetOffset(podcast.StartDateTime);
             User.SaveListenPosition(user.Id, user.ListeningAudioToken, newOffset);
             return new AlexaResponse()
             {
-
                 Response = new AlexaResponse.ResponseAttributes()
                 {
                     OutputSpeech = withVoice ? new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()

@@ -43,7 +43,11 @@ namespace AlexaRadioT.Models
         {
             get
             {
-                return TimeLabels.OrderBy(x => x.Time);
+                if (TimeLabels != null && TimeLabels.Length > 0)
+                {
+                    return TimeLabels.OrderBy(x => x.Time);
+                }
+                return null;
             }
         }
 
@@ -51,8 +55,16 @@ namespace AlexaRadioT.Models
         {
             get
             {
-                DateTime start = TimeLabels[0].Time;
-                return start.AddMinutes(start.Minute * -1);
+                if (TimeLabels != null && TimeLabels.Any())
+                {
+                    DateTime start = TimeLabels[0].Time;
+                    return start.AddMinutes(start.Minute * -1);
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+                
             }
         }
     }

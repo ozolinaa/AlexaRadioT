@@ -16,6 +16,9 @@ namespace AlexaRadioT.Intents
 
         private PodcastTimeLabel _getPreviousTopic(PodcastEnity podcast, long offsetInMilliseconds)
         {
+            if (podcast.OrderedTimeLabels == null)
+                return null;
+
             PodcastTimeLabel currentTopic = null;
             foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
             {
@@ -65,8 +68,8 @@ namespace AlexaRadioT.Intents
                 };
             }
 
-            PodcastEnity podcast = RadioT.GetPodcastDetails(Int32.Parse(token));
-
+            int podcastNumber = Int32.Parse(token);
+            PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
             PodcastTimeLabel previousTopic = _getPreviousTopic(podcast, offsetInMilliseconds);
 
             if (previousTopic == null)
