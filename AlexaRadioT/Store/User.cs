@@ -62,8 +62,6 @@ namespace AlexaRadioT.Store
 
         public static void SaveListenPosition(string userId, string audioToken, long offsetInMilliseconds)
         {
-            Log.LogDebug(string.Format("SaveListenPosition Id {0} audioToken {1} offsetInMilliseconds {2}", userId, audioToken, offsetInMilliseconds));
-
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
                 cmd.CommandText = "UPDATE [Users] SET [LastActiveDateTimeUtc] = @CurrentDateTime, [ListeningAudioToken] = @audioToken, [OffsetInMilliseconds] = @offsetInMilliseconds WHERE [Id] = @Id";
@@ -77,8 +75,6 @@ namespace AlexaRadioT.Store
 
         public static void ClearListenPosition(string userId)
         {
-            Log.LogDebug(string.Format("ClearListenPosition Id {0}", userId));
-
             using (SqliteCommand cmd = DB.GetConnection().CreateCommand())
             {
                 cmd.CommandText = "UPDATE [Users] SET [LastActiveDateTimeUtc] = @ActiveDateTime, [ListeningAudioToken] = NULL, [OffsetInMilliseconds] = NULL WHERE [Id] = @Id";

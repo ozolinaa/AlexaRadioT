@@ -15,24 +15,24 @@ namespace AlexaRadioT.Events
             PodcastEnity podcast = RadioT.GetLatestPodcasts(1).First();
             return PlayPodcastNumberIntent.PlayPodcast(request, podcast.Number, "<speak>Welcome to Radio-T! Playing latest podcast</speak>");
 
-            AlexaResponse response = new AlexaResponse()
-            {
-                Response = new AlexaResponse.ResponseAttributes()
-                {
-                    OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
-                    {
-                        Type = "SSML",
-                        Ssml = "<speak>Welcome to Radio-T! Playing latest podcast</speak>"
-                    },
-                    ShouldEndSession = true,
-                },
-                Session = new AlexaRequest.SessionCustomAttributes()
-                {
-                    NextIntentName = typeof(PlayLastPodcastIntent).ToString()
-                }
-            };
+            //AlexaResponse response = new AlexaResponse()
+            //{
+            //    Response = new AlexaResponse.ResponseAttributes()
+            //    {
+            //        OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+            //        {
+            //            Type = "SSML",
+            //            Ssml = "<speak>Welcome to Radio-T! Playing latest podcast</speak>"
+            //        },
+            //        ShouldEndSession = true,
+            //    },
+            //    Session = new AlexaRequest.SessionCustomAttributes()
+            //    {
+            //        NextIntentName = typeof(PlayLastPodcastIntent).ToString()
+            //    }
+            //};
 
-            return response;
+            //return response;
         }
     }
 }

@@ -18,8 +18,6 @@ namespace AlexaRadioT.Intents
         {
             AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
 
-            Log.LogDebug(string.Format("User.GetById Id {0} ListeningAudioToken {1} OffsetInMilliseconds {2}", user.Id, user.ListeningAudioToken, user.OffsetInMilliseconds));
-
             if (string.IsNullOrEmpty(user.ListeningAudioToken))
                 return null;
 
@@ -34,8 +32,6 @@ namespace AlexaRadioT.Intents
         protected AlexaResponse _resumePodcast(AlexaRequest request, int podcastNumber, long offset, bool withVoice)
         {
             PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
-
-            Log.LogDebug(string.Format("Resuming podcastNumber {0} offset {1}", podcastNumber, offset));
 
             return new AlexaResponse()
             {

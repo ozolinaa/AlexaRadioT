@@ -18,7 +18,7 @@ namespace AlexaRadioT.Controllers
     public class AlexaController : Controller
     {
         [HttpPost]
-        public IActionResult IntentAction()
+        public IActionResult IntentActionAsync()
         {
             AlexaResponse response = null;
 
@@ -34,7 +34,7 @@ namespace AlexaRadioT.Controllers
                 AlexaRequest request = JsonConvert.DeserializeObject<AlexaRequest>(requestBodyStr);
 
 #if (RELEASE)
-                if (!_isValidAmazonRequest(requestBodyStr, request))
+                if(_isValidAmazonRequest(requestBodyStr, request) == false)
                     return BadRequest();
 #endif
 
@@ -69,16 +69,30 @@ namespace AlexaRadioT.Controllers
         }
 
 
+        private bool _isValidAmazonRequest(string requestBodyStr, AlexaRequest request)
+        {
+            if (!_validateAmazonCertificate(out X509Certificate2 cert))
+                return false;
+            if (!_isRequestBodySignatureValid(requestBodyStr, cert))
+                return false;
+            if (!_isRequestHasValidTimeStamp(request))
+                return false;
+            if (!_isValidApplicationId(request))
+                return false;
+
+            return true;
+        }
+
         private static bool _isValidApplicationId(AlexaRequest request) {
             return Array.IndexOf(ApplicationSettingsService.Skill.RespondToSkillId,
                 request.Context.System.Application.ApplicationId) > -1;
         }
 
-        private bool _validateAmazonCertificate(out X509Certificate cert)
+        private bool _validateAmazonCertificate(out X509Certificate2 cert)
         {
             cert = null;
 
-            if (!Request.Headers.ContainsKey("Signature") || !Request.Headers.ContainsKey("SignatureCertChainUrl"))
+            if (!Request.Headers.ContainsKey("SignatureCertChainUrl"))
                 return false;
 
             string signatureCertChainUrl = Request.Headers["SignatureCertChainUrl"].First().Replace("/../", "/");
@@ -87,8 +101,9 @@ namespace AlexaRadioT.Controllers
                 return false;
 
             Uri certUrl = new Uri(signatureCertChainUrl);
-            
+
             if (!((certUrl.Port == 443 || certUrl.IsDefaultPort)
+                && certUrl.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
                 && certUrl.Host.Equals("s3.amazonaws.com", StringComparison.OrdinalIgnoreCase)
                 && certUrl.AbsolutePath.StartsWith("/echo.api/")))
                 return false;
@@ -96,7 +111,7 @@ namespace AlexaRadioT.Controllers
             using (var web = new System.Net.WebClient())
             {
                 byte[] certificateBytes = web.DownloadData(certUrl);
-                cert = new X509Certificate(certificateBytes);
+                cert = new X509Certificate2(certificateBytes);
 
                 if (!((DateTime.TryParse(cert.GetExpirationDateString(), out DateTime expityDate)
                     && expityDate > DateTime.UtcNow)
@@ -111,29 +126,32 @@ namespace AlexaRadioT.Controllers
             return true;
         }
 
-        private bool _isRequestBodySignatureValid(string requestBodyStr, X509Certificate cert)
+        private bool _isRequestBodySignatureValid(string requestBodyStr, X509Certificate2 cert)
         {
+            if (string.IsNullOrEmpty(requestBodyStr))
+                return false;
+
+            if (!Request.Headers.ContainsKey("Signature"))
+                return false;
+
+            string signatureString = Request.Headers["Signature"].First();
+
+            if (string.IsNullOrEmpty(signatureString))
+                return false; 
+
+            byte[] signature = Convert.FromBase64String(signatureString);
+
             byte[] requestSHA1Hash = null;
-            using (SHA1Managed sha1 = new SHA1Managed())
+            using (var sha1 = SHA1.Create())
             {
                 requestSHA1Hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(requestBodyStr));
             }
 
-            string signatureString = Request.Headers["Signature"].First();
-            byte[] signature = Convert.FromBase64String(signatureString);
-
-            //Create a new instance of RSACryptoServiceProvider.
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            //Get an instance of RSAParameters from ExportParameters function.
-            RSAParameters RSAKeyInfo = rsa.ExportParameters(false);
-            //Set RSAKeyInfo to the public key values. 
-            RSAKeyInfo.Modulus = cert.GetPublicKey();
-            //Import key parameters into RSA.
-            rsa.ImportParameters(RSAKeyInfo);
-
-            // I think here need to check for false, but in the tutorial it is like this
-            if (rsa.VerifyHash(requestSHA1Hash, CryptoConfig.MapNameToOID("SHA1"), signature))
-                return false;
+            using (RSA rsa = cert.GetRSAPublicKey())
+            {
+                if (rsa == null || rsa.VerifyHash(requestSHA1Hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1) == false)
+                    return false;
+            }
 
             return true;
         }
@@ -143,24 +161,6 @@ namespace AlexaRadioT.Controllers
             double maxRequestDelaySeconds = 150;
             double requestDelaySeconds = (DateTime.UtcNow - alexaRequest.Request.Timestamp).TotalSeconds;
             if (requestDelaySeconds <= 0 || requestDelaySeconds > maxRequestDelaySeconds)
-                return false;
-
-            return true;
-        }
-
-        private bool _isValidAmazonRequest(string requestBodyStr, AlexaRequest alexaRequest)
-        {
-            if (!_isValidApplicationId(alexaRequest))
-                return false;
-
-            X509Certificate cert;
-            if (!_validateAmazonCertificate(out cert))
-                return false;
-
-            if (!_isRequestBodySignatureValid(requestBodyStr, cert))
-                return false;
-
-            if (!_isRequestHasValidTimeStamp(alexaRequest))
                 return false;
 
             return true;
