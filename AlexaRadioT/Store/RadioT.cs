@@ -49,17 +49,32 @@ namespace AlexaRadioT.Store
 
         public static TimeSpan HowLongForNextLiveStream()
         {
+            //Forse to RespondItsLive
+            //return DateTime.Now - DateTime.Now.AddHours(1);
+
             DateTime timeInMoscow = GetTimeInMoscow();
             DateTime nextLiveStream = WhenNextLiveStream();
             TimeSpan realResult = nextLiveStream - timeInMoscow;
 
-            double thresholdHours = 2;
+            double thresholdHours = 4;
+            //Forse to check stream is available
+            //realResult = timeInMoscow.AddDays(7).AddHours(thresholdHours/2) - timeInMoscow;
+            if (realResult.TotalHours > 24 * 7 - thresholdHours)
+            {
+                System.Net.HttpStatusCode statusCode;
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage result = client.GetAsync(ApplicationSettingsService.Skill.LiveStreamUrl, HttpCompletionOption.ResponseHeadersRead).Result;
+                    statusCode = result.StatusCode;
+                }
 
-            if (realResult.TotalHours < 24 * 7 - thresholdHours)
-                return realResult;
-
-            //This will return negative TimeSpan that indicates for how long it is Live
-            return nextLiveStream.AddDays(-7) - timeInMoscow;
+                if (statusCode != System.Net.HttpStatusCode.NotFound)
+                {
+                    //This will return negative TimeSpan that indicates for how long it is Live
+                    return nextLiveStream.AddDays(-7) - timeInMoscow;
+                }
+            }
+            return realResult;
         }
 
         public static IOrderedEnumerable<PodcastRssItem> GetLatestPodcastsFromRSS()

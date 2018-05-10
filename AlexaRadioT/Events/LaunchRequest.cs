@@ -12,27 +12,36 @@ namespace AlexaRadioT.Events
     {
         public AlexaResponse ProcessRequest(AlexaRequest request)
         {
-            PodcastEnity podcast = RadioT.GetLatestPodcasts(1).First();
-            return PlayPodcastNumberIntent.PlayPodcast(request, podcast.Number, "<speak>Welcome to Radio-T! Playing latest podcast</speak>");
-
-            //AlexaResponse response = new AlexaResponse()
-            //{
-            //    Response = new AlexaResponse.ResponseAttributes()
-            //    {
-            //        OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
-            //        {
-            //            Type = "SSML",
-            //            Ssml = "<speak>Welcome to Radio-T! Playing latest podcast</speak>"
-            //        },
-            //        ShouldEndSession = true,
-            //    },
-            //    Session = new AlexaRequest.SessionCustomAttributes()
-            //    {
-            //        NextIntentName = typeof(PlayLastPodcastIntent).ToString()
-            //    }
-            //};
-
-            //return response;
+            TimeSpan duration = RadioT.HowLongForNextLiveStream();
+            if (duration.TotalMilliseconds > 0)
+            {
+                PodcastEnity podcast = RadioT.GetLatestPodcasts(1).First();
+                return PlayPodcastNumberIntent.PlayPodcast(request, podcast.Number, "<speak>Welcome to Radio-T! Playing latest podcast</speak>");
+            }
+            else
+            {
+                User.SaveListenPosition(request.Session.User.UserId, "LiveStream", 0);
+                return new AlexaResponse()
+                {
+                    Response = new AlexaResponse.ResponseAttributes()
+                    {
+                        OutputSpeech = new AlexaResponse.ResponseAttributes.OutputSpeechAttributes()
+                        {
+                            Type = "SSML",
+                            Ssml = string.Format("<speak>{0}</speak>", "Welcome to Radio-T! Playing <phoneme ph=\"laɪv\">live</phoneme> stream")
+                        },
+                        Card = new AlexaResponse.ResponseAttributes.CardAttributes()
+                        {
+                            Type = "Simple",
+                            Title = "Radio-T ",
+                            Content = "Playing Live Stream "
+                        },
+                        Directives = new AlexaResponse.ResponseAttributes.AudioDirective[] {
+                            new AlexaResponse.ResponseAttributes.AudioDirective(RadioT.GetUriForLiveStream(), 0, "LiveStream")
+                        }
+                    }
+                };
+            }
         }
     }
 }
