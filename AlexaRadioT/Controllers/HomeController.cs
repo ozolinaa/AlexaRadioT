@@ -13,6 +13,11 @@ namespace AlexaRadioT.Controllers
             return View();
         }
 
+        public IActionResult Debug()
+        {
+            return View();
+        }
+
         public IActionResult DebugLog()
         {
             IEnumerable<Models.LogItem> debugLog = Store.Log.DebugSelect(50);

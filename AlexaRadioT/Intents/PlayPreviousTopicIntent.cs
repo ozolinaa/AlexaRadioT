@@ -16,10 +16,10 @@ namespace AlexaRadioT.Intents
 
         private PodcastTimeLabel _getPreviousTopic(PodcastEnity podcast, long offsetInMilliseconds)
         {
-            if (podcast.OrderedTimeLabels == null)
+            if (podcast.OrderedTimeLabels == null || podcast.OrderedTimeLabels.Any() == false)
                 return null;
 
-            PodcastTimeLabel currentTopic = null;
+            PodcastTimeLabel currentTopic = podcast.OrderedTimeLabels.First();
             foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
             {
                 if ((timeLabel.Time - podcast.StartDateTime).TotalMilliseconds < offsetInMilliseconds)
