@@ -14,43 +14,12 @@ namespace AlexaRadioT.Intents
             return _respondWithPreviousTopic(request, true);
         }
 
-        private PodcastTimeLabel _getPreviousTopic(PodcastEnity podcast, long offsetInMilliseconds)
-        {
-            if (podcast.OrderedTimeLabels == null || podcast.OrderedTimeLabels.Any() == false)
-                return null;
-
-            PodcastTimeLabel currentTopic = podcast.OrderedTimeLabels.First();
-            foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
-            {
-                if ((timeLabel.Time - podcast.StartDateTime).TotalMilliseconds < offsetInMilliseconds)
-                {
-                    currentTopic = timeLabel;
-                }
-            }
-
-            PodcastTimeLabel previousTopic = null;
-            foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
-            {
-                if (timeLabel.Time.Ticks == currentTopic.Time.Ticks)
-                {
-                    if (previousTopic != null && previousTopic.Time.Ticks == timeLabel.Time.Ticks)
-                    {
-                        previousTopic = null;
-                    }
-                    break;
-                }
-                previousTopic = timeLabel;
-            }
-
-            return previousTopic;
-        }
 
         protected AlexaResponse _respondWithPreviousTopic(AlexaRequest request, bool withVoice)
         {
             AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
 
             string token = request.Context.AudioPlayer.Token;
-            long offsetInMilliseconds = request.Context.AudioPlayer.OffsetInMilliseconds;
 
             if (token.Equals("LiveStream", StringComparison.OrdinalIgnoreCase))
             {
@@ -69,8 +38,9 @@ namespace AlexaRadioT.Intents
             }
 
             int podcastNumber = Int32.Parse(token);
+            long offsetInMilliseconds = request.Context.AudioPlayer.OffsetInMilliseconds;
             PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
-            PodcastTimeLabel previousTopic = _getPreviousTopic(podcast, offsetInMilliseconds);
+            PodcastTimeLabel previousTopic = podcast.GetPreviousTopic(offsetInMilliseconds);
 
             if (previousTopic == null)
             {

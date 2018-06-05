@@ -67,5 +67,58 @@ namespace AlexaRadioT.Models
                 
             }
         }
+
+
+
+        public PodcastTimeLabel GetNextTopic(long currentOffsetInMilliseconds)
+        {
+            if (OrderedTimeLabels == null)
+                return null;
+
+            PodcastTimeLabel nextTopic = null;
+            foreach (PodcastTimeLabel timeLabel in OrderedTimeLabels)
+            {
+                if ((timeLabel.Time - StartDateTime).TotalMilliseconds > currentOffsetInMilliseconds)
+                {
+                    nextTopic = timeLabel;
+                    break;
+                }
+            }
+
+            return nextTopic;
+        }
+
+
+        public PodcastTimeLabel GetPreviousTopic(long currentOffsetInMilliseconds)
+        {
+            if (OrderedTimeLabels == null || OrderedTimeLabels.Any() == false)
+                return null;
+
+            PodcastTimeLabel currentTopic = OrderedTimeLabels.First();
+            foreach (PodcastTimeLabel timeLabel in OrderedTimeLabels)
+            {
+                if ((timeLabel.Time - StartDateTime).TotalMilliseconds < currentOffsetInMilliseconds)
+                {
+                    currentTopic = timeLabel;
+                }
+            }
+
+            PodcastTimeLabel previousTopic = null;
+            foreach (PodcastTimeLabel timeLabel in OrderedTimeLabels)
+            {
+                if (timeLabel.Time.Ticks == currentTopic.Time.Ticks)
+                {
+                    if (previousTopic != null && previousTopic.Time.Ticks == timeLabel.Time.Ticks)
+                    {
+                        previousTopic = null;
+                    }
+                    break;
+                }
+                previousTopic = timeLabel;
+            }
+
+            return previousTopic;
+        }
+
     }
 }

@@ -14,31 +14,11 @@ namespace AlexaRadioT.Intents
             return _respondWithNextTopic(request, true);
         }
 
-        private PodcastTimeLabel _getNextTopic(PodcastEnity podcast, long offsetInMilliseconds)
-        {
-            if (podcast.OrderedTimeLabels == null)
-                return null;
-
-            PodcastTimeLabel nextTopic = null;
-            foreach (PodcastTimeLabel timeLabel in podcast.OrderedTimeLabels)
-            {
-                if ((timeLabel.Time - podcast.StartDateTime).TotalMilliseconds > offsetInMilliseconds)
-                {
-                    nextTopic = timeLabel;
-                    break;
-                }
-            }
-
-            return nextTopic;
-        }
-
-
         protected AlexaResponse _respondWithNextTopic(AlexaRequest request, bool withVoice)
         {
             AlexaUserModel user = User.GetById(request.Context.System.User.UserId);
 
             string token = request.Context.AudioPlayer.Token;
-            long offsetInMilliseconds = request.Context.AudioPlayer.OffsetInMilliseconds;
 
             if (user.ListeningAudioToken.Equals("LiveStream", StringComparison.OrdinalIgnoreCase))
             {
@@ -57,8 +37,9 @@ namespace AlexaRadioT.Intents
             }
 
             int podcastNumber = Int32.Parse(token);
+            long offsetInMilliseconds = request.Context.AudioPlayer.OffsetInMilliseconds;
             PodcastEnity podcast = RadioT.GetPodcastDetails(podcastNumber);
-            PodcastTimeLabel nextTopic = _getNextTopic(podcast, offsetInMilliseconds);
+            PodcastTimeLabel nextTopic = podcast.GetNextTopic(offsetInMilliseconds);
 
             if (nextTopic == null)
             {

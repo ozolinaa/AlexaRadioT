@@ -29,6 +29,9 @@ namespace AlexaRadioT
             //https://stackoverflow.com/questions/45058527/proper-way-to-build-instantiate-a-static-class-in-aspnetcore
             //Could not configure dependency injection from articles above, will do basic stuff in next 2 lines
             SkillSettings skillSettings = Configuration.GetSection("SkillSettings").Get<SkillSettings>();
+            string webApplicationUrlFromEnvironment = Environment.GetEnvironmentVariable("WebApplicationUrl");
+            if (string.IsNullOrEmpty(webApplicationUrlFromEnvironment) == false)
+                skillSettings.WebApplicationUrl = new Uri(webApplicationUrlFromEnvironment);
             ApplicationSettingsService.SetSkillSettings(skillSettings);
 
             services.AddMvc();
