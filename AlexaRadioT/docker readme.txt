@@ -38,22 +38,32 @@ docker run -d -e WebApplicationUrl='https://radio-t.lalala.space' --name alexara
 
 ____________________________
 
-# wordpress and mysql
+# WORDPRESS AND MYSQL
 
 docker network create --driver bridge isolated_network
 
 # docker pull mysql:5.7
-docker run -d --net=isolated_network --restart=unless-stopped -p 3306:3306 -v /var/lib/docker_mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=pass@word1 -e MYSQL_DATABASE=wp_lalala_space -e MYSQL_USER=wp_lalala_space -e MYSQL_PASSWORD=pass@word1  --name mysql mysql:5.7
+# https://severalnines.com/blog/mysql-docker-containers-understanding-basics
+docker run -d --net=isolated_network --restart=unless-stopped -p 3306:3306 -v /var/docker_mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=pass@word1 --name mysql mysql:5.7
+docker inspect mysql
+apt-get install mysql-client
+mysql -uroot -ppass@word1 -h 172.18.0.2 -P 3306
+
+# https://www.a2hosting.com/kb/developer-corner/mysql/managing-mysql-databases-and-users-from-the-command-line
+GRANT ALL PRIVILEGES ON *.* TO 'wp_lalala_space'@'%' IDENTIFIED BY 'pass@word1';
+CREATE DATABASE wp_lalala_space;
+\q
+
 # docker stop mysql
 # docker start mysql
 # docker rm mysql
-# rm -r /var/lib/docker_mysql
+# rm -r /var/docker_mysql
 
 # https://hub.docker.com/r/bitnami/wordpress/
-# docker bitnami/wordpress:latest
-docker run -d --net=isolated_network --restart=unless-stopped -p 8081:80 -v /var/www/docker_wp_lalala:/bitnami -e MARIADB_HOST=mysql -e WORDPRESS_DATABASE_NAME=wp_lalala_space -e WORDPRESS_DATABASE_USER=wp_lalala_space -e WORDPRESS_DATABASE_PASSWORD=pass@word1 -e WORDPRESS_USERNAME=anton.ozolin -e WORDPRESS_PASSWORD=pass@word1 -e WORDPRESS_EMAIL=anton.ozolin@gmail.com  --name wordpress bitnami/wordpress:latest
-# docker stop wordpress
-# docker start wordpress
-# docker rm wordpress
-# rm -r /var/www/docker_wp_lalala
+# docker pull bitnami/wordpress:latest
+docker run -d --net=isolated_network --restart=unless-stopped -p 8081:80 -v /var/www/docker_wp_lalala_space:/bitnami -e MARIADB_HOST=mysql -e WORDPRESS_DATABASE_NAME=wp_lalala_space -e WORDPRESS_DATABASE_USER=wp_lalala_space -e WORDPRESS_DATABASE_PASSWORD=pass@word1 -e WORDPRESS_USERNAME=anton.ozolin -e WORDPRESS_PASSWORD=pass@word1 -e WORDPRESS_EMAIL=anton.ozolin@gmail.com  --name wp_lalala_space bitnami/wordpress:latest
+# docker stop wp_lalala_space
+# docker start wp_lalala_space
+# docker rm wp_lalala_space
+# rm -r /var/www/docker_wp_lalala_space
 # https://docs.bitnami.com/general/apps/wordpress/#how-to-change-the-wordpress-domain-name
