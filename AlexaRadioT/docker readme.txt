@@ -34,8 +34,10 @@ sudo certbot renew --dry-run
 ____________________________
 
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
-docker run -d -e WebApplicationUrl='https://radio-t.lalala.space' --name alexaradiot --restart=unless-stopped -p 8080:80 xtonyx/alexaradiot:20180605065851
-
+docker run -d -e WebApplicationUrl='https://radio-t.lalala.space' --name alexaradiot --restart=unless-stopped -p 8080:80 xtonyx/alexaradiot:20180615045530
+# docker stop alexaradiot
+# docker rm alexaradiot
+# docker rmi $(docker images -a -q)
 ____________________________
 
 # WORDPRESS AND MYSQL
